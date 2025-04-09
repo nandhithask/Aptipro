@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Analysis | Aptitude Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --danger: #f72585;
+            --warning: #f8961e;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f7fa;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .header h1 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: var(--gray);
+        }
+
+        .analysis-container {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .analysis-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .summary-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .detailed-analysis {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .score-display {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .score-circle {
+            position: relative;
+            width: 150px;
+            height: 150px;
+        }
+
+        .circle-bg {
+            fill: none;
+            stroke: var(--light-gray);
+            stroke-width: 10;
+        }
+
+        .circle-progress {
+            fill: none;
+            stroke: var(--primary);
+            stroke-width: 10;
+            stroke-linecap: round;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+            transition: stroke-dashoffset 0.5s ease;
+        }
+
+        .circle-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .circle-text h2 {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .circle-text p {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .stat-card {
+            background: var(--light);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            font-size: 1.8rem;
+            color: var(--dark);
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .topic-performance {
+            margin-top: 20px;
+        }
+
+        .topic-item {
+            margin-bottom: 15px;
+        }
+
+        .topic-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .topic-name {
+            font-weight: 500;
+        }
+
+        .topic-score {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--light-gray);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary);
+            border-radius: 4px;
+        }
+
+        .tab-container {
+            margin-bottom: 20px;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--light-gray);
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            border-bottom: 3px solid var(--primary);
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .question-item {
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+
+        .question-item.correct {
+            border-left: 4px solid var(--success);
+        }
+
+        .question-item.incorrect {
+            border-left: 4px solid var(--danger);
+        }
+
+        .question-item.skipped {
+            border-left: 4px solid var(--warning);
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .question-topic {
+            font-size: 0.8rem;
+            background: var(--light);
+            padding: 3px 8px;
+            border-radius: 20px;
+            color: var(--gray);
+        }
+
+        .question-difficulty {
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .question-difficulty.easy {
+            color: var(--success);
+        }
+
+        .question-difficulty.medium {
+            color: var(--warning);
+        }
+
+        .question-difficulty.hard {
+            color: var(--danger);
+        }
+
+        .question-text {
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .answer-section {
+            background: var(--light);
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .answer-row {
+            display: flex;
+            margin-bottom: 5px;
+        }
+
+        .answer-label {
+            font-weight: 500;
+            min-width: 120px;
+        }
+
+        .correct-answer {
+            color: var(--success);
+        }
+
+        .incorrect-answer {
+            color: var(--danger);
+        }
+
+        .skipped-answer {
+            color: var(--warning);
+        }
+
+        .explanation {
+            padding: 10px;
+            background-color: rgba(76, 201, 240, 0.1);
+            border-radius: 5px;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+
+        .time-taken {
+            font-size: 0.8rem;
+            color: var(--gray);
+            margin-top: 5px;
+        }
+
+        .improvement-section {
+            margin-top: 30px;
+        }
+
+        .improvement-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .improvement-card h3 {
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        .focus-area {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: var(--light);
+            border-radius: 5px;
+        }
+
+        .focus-icon {
+            margin-right: 10px;
+            color: var(--warning);
+            font-size: 1.2rem;
+        }
+
+        .strength-area {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: var(--light);
+            border-radius: 5px;
+        }
+
+        .strength-icon {
+            margin-right: 10px;
+            color: var(--success);
+            font-size: 1.2rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.3s;
+            font-size: 1rem;
+            margin-top: 20px;
+        }
+
+        .btn:hover {
+            background: var(--secondary);
+        }
+
+        .btn-block {
+            display: block;
+            text-align: center;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Test Analysis</h1>
+            <p id="test-name">Test Results</p>
+        </div>
+
+        <div class="analysis-container">
+            <div class="summary-section">
+                <div class="summary-card">
+                    <div class="score-display">
+                        <div class="score-circle">
+                            <svg viewBox="0 0 36 36" class="circular-chart">
+                                <path class="circle-bg"
+                                    d="M18 2.0845
+                                    a 15.9155 15.9155 0 0 1 0 31.831
+                                    a 15.9155 15.9155 0 0 1 0 -31.831"
+                                />
+                                <path class="circle-progress"
+                                    stroke-dasharray="0, 100"
+                                    d="M18 2.0845
+                                    a 15.9155 15.9155 0 0 1 0 31.831
+                                    a 15.9155 15.9155 0 0 1 0 -31.831"
+                                />
+                            </svg>
+                            <div class="circle-text">
+                                <h2 id="score-percent">0%</h2>
+                                <p>Score</p>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 id="test-title">Test Results</h3>
+                            <p id="test-date">Completed just now</p>
+                            <p id="test-user">By You</p>
+                        </div>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <h3 id="total-questions">0</h3>
+                            <p>Total Questions</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3 id="correct-answers">0</h3>
+                            <p>Correct</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3 id="incorrect-answers">0</h3>
+                            <p>Incorrect</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3 id="skipped-answers">0</h3>
+                            <p>Skipped</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3 id="avg-time">0s</h3>
+                            <p>Avg Time/Q</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3 id="total-time">0s</h3>
+                            <p>Total Time</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="summary-card">
+                    <h3>Topic Performance</h3>
+                    <div class="topic-performance" id="topic-performance">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+
+                <div class="summary-card">
+                    <h3>Difficulty Analysis</h3>
+                    <div class="topic-performance" id="difficulty-performance">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+
+                <a href="#" class="btn btn-block">Take Another Test</a>
+            </div>
+
+            <div class="detailed-analysis">
+                <div class="tab-container">
+                    <div class="tabs">
+                        <div class="tab active" data-tab="incorrect">Incorrect Answers</div>
+                        <div class="tab" data-tab="correct">Correct Answers</div>
+                        <div class="tab" data-tab="skipped">Skipped Questions</div>
+                        <div class="tab" data-tab="all">All Questions</div>
+                    </div>
+
+                    <div class="tab-content active" id="incorrect-tab">
+                        <div id="incorrect-questions">
+                            <!-- Populated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="correct-tab">
+                        <div id="correct-questions">
+                            <!-- Populated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="skipped-tab">
+                        <div id="skipped-questions">
+                            <!-- Populated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="all-tab">
+                        <div id="all-questions">
+                            <!-- Populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="improvement-section">
+                    <div class="improvement-card">
+                        <h3>Areas to Improve</h3>
+                        <div id="improvement-areas">
+                            <!-- Populated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <div class="improvement-card">
+                        <h3>Your Strengths</h3>
+                        <div id="strength-areas">
+                            <!-- Populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+   <!-- Add this right before the closing </body> tag -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // 1. Retrieve and validate session data
+    const testData = JSON.parse(sessionStorage.getItem('testResults'));
+    if (!testData || !testData.questions || !testData.userResponses) {
+        alert('No test results found. Please take a test first.');
+        window.location.href = 'attend-test.html';
+        return;
+    }
+
+    // 2. Process and analyze results
+    const analysis = analyzeTestData(testData);
+    
+    // 3. Render all components
+    renderTestSummary(testData, analysis);
+    renderPerformanceCharts(analysis);
+    renderQuestionDetails(testData);
+    renderImprovementSuggestions(analysis);
+    setupTabNavigation();
+});
+
+function analyzeTestData(testData) {
+    const results = {
+        byTopic: {},
+        byDifficulty: {},
+        summary: {
+            correct: 0,
+            incorrect: 0,
+            skipped: 0,
+            accuracy: 0
+        },
+        timing: {
+            totalTime: 0,
+            averageTime: 0,
+            byQuestion: []
+        }
+    };
+
+    // Calculate time metrics
+    const totalTimeUsed = testData.summary?.timeUsed || 0;
+    
+    testData.questions.forEach((question, index) => {
+        const response = testData.userResponses[index] || {};
+        const topic = question.topic || "Unknown";
+        const difficulty = question.difficulty || "Unknown";
+        
+        // Track time spent per question
+        const timeSpent = response.timeSpent || 0;
+        results.timing.totalTime += timeSpent;
+        results.timing.byQuestion[index] = timeSpent;
+
+        // Ensure initialization of topic and difficulty categories
+        if (!results.byTopic[topic]) {
+            results.byTopic[topic] = { correct: 0, total: 0, timeSpent: 0 };
+        }
+        if (!results.byDifficulty[difficulty]) {
+            results.byDifficulty[difficulty] = { correct: 0, total: 0, timeSpent: 0 };
+        }
+
+        // Add time to topic and difficulty
+        results.byTopic[topic].timeSpent += timeSpent;
+        results.byDifficulty[difficulty].timeSpent += timeSpent;
+
+        // Update counts
+        results.byTopic[topic].total++;
+        results.byDifficulty[difficulty].total++;
+
+        const isCorrect = response.selectedOption === question.correctAnswer;
+        const isSkipped = response.skipped || response.selectedOption == null;
+
+        if (isSkipped) {
+            results.summary.skipped++;
+        } else if (isCorrect) {
+            results.summary.correct++;
+            results.byTopic[topic].correct++;
+            results.byDifficulty[difficulty].correct++;
+        } else {
+            results.summary.incorrect++;
+        }
+    });
+
+    // If totalTime is 0, use the test's overall time
+    if (results.timing.totalTime === 0 && totalTimeUsed) {
+        results.timing.totalTime = totalTimeUsed / 1000; // Convert ms to seconds
+    }
+
+    results.timing.averageTime = (results.timing.totalTime / testData.questions.length);
+    results.summary.accuracy = ((results.summary.correct / testData.questions.length) * 100).toFixed(1);
+
+    return results;
+}
+
+function renderTestSummary(testData, analysis) {
+    // Update basic info
+    document.getElementById('test-name').textContent = testData.testName || 'Test Results';
+    document.getElementById('test-title').textContent = testData.testName || 'Aptitude Assessment';
+    
+    // Format the date nicely if available
+    const testDate = testData.dateTaken ? new Date(testData.dateTaken) : new Date();
+    document.getElementById('test-date').textContent = `Completed on ${testDate.toLocaleDateString()} at ${testDate.toLocaleTimeString()}`;
+    
+    // Update score display
+    const percentage = analysis.summary.accuracy;
+    document.getElementById('score-percent').textContent = `${percentage}%`;
+    
+    // Animate progress circle
+    const circle = document.querySelector('.circle-progress');
+    const circumference = 2 * Math.PI * 15.9155;
+    circle.style.strokeDasharray = `${circumference}, ${circumference}`;
+    circle.style.strokeDashoffset = circumference - (percentage / 100 * circumference);
+
+    // Update stats grid with proper formatting
+    document.getElementById('total-questions').textContent = testData.questions.length;
+    document.getElementById('correct-answers').textContent = analysis.summary.correct;
+    document.getElementById('incorrect-answers').textContent = analysis.summary.incorrect;
+    document.getElementById('skipped-answers').textContent = analysis.summary.skipped;
+    
+    // Format time values with proper units
+    const avgTime = analysis.timing.averageTime;
+    document.getElementById('avg-time').textContent = avgTime >= 60 
+        ? `${Math.floor(avgTime/60)}m ${Math.round(avgTime%60)}s` 
+        : `${Math.round(avgTime)}s`;
+    
+    const totalTime = analysis.timing.totalTime;
+    document.getElementById('total-time').textContent = totalTime >= 60 
+        ? `${Math.floor(totalTime/60)}m ${Math.round(totalTime%60)}s` 
+        : `${Math.round(totalTime)}s`;
+}
+
+function renderPerformanceCharts(analysis) {
+    renderChart('topic-performance', analysis.byTopic);
+    renderChart('difficulty-performance', analysis.byDifficulty, true);
+}
+
+function renderChart(containerId, data, isDifficulty = false) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = '';
+
+    const entries = Object.entries(data)
+        .filter(([_, stats]) => stats.total > 0)
+        .sort((a, b) => (a[1].correct / a[1].total) - (b[1].correct / b[1].total));
+
+    entries.forEach(([name, stats]) => {
+        const percentage = Math.round((stats.correct / stats.total) * 100);
+        const avgTime = stats.timeSpent / stats.total;
+        
+        const displayName = isDifficulty 
+            ? name.charAt(0).toUpperCase() + name.slice(1)
+            : name;
+
+        const timeDisplay = avgTime >= 60 
+            ? `${Math.floor(avgTime/60)}m ${Math.round(avgTime%60)}s` 
+            : `${Math.round(avgTime)}s`;
+
+        const element = document.createElement('div');
+        element.className = 'topic-item';
+        element.innerHTML = `
+            <div class="topic-header">
+                <span class="topic-name">${displayName}</span>
+                <span class="topic-score">${stats.correct}/${stats.total} (${percentage}%) - Avg: ${timeDisplay}</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: ${percentage}%"></div>
+            </div>
+        `;
+        container.appendChild(element);
+    });
+}
+
+function renderQuestionDetails(testData) {
+    const containers = {
+        all: document.getElementById('all-questions'),
+        correct: document.getElementById('correct-questions'),
+        incorrect: document.getElementById('incorrect-questions'),
+        skipped: document.getElementById('skipped-questions')
+    };
+
+    // Clear all containers
+    Object.values(containers).forEach(container => container.innerHTML = '');
+
+    testData.questions.forEach((question, index) => {
+        const response = testData.userResponses[index] || {};
+        const isCorrect = response.selectedOption === question.correctAnswer;
+        const isSkipped = response.skipped || response.selectedOption === undefined;
+        const timeTaken = response.timeSpent || 0;
+
+        const questionElement = createQuestionElement(question, index, response, isCorrect, isSkipped, timeTaken);
+        
+        // Add to appropriate containers
+        containers.all.appendChild(questionElement.cloneNode(true));
+        
+        if (isCorrect) {
+            containers.correct.appendChild(questionElement.cloneNode(true));
+        } else if (isSkipped) {
+            containers.skipped.appendChild(questionElement.cloneNode(true));
+        } else {
+            containers.incorrect.appendChild(questionElement);
+        }
+    });
+}
+
+function createQuestionElement(question, index, response, isCorrect, isSkipped, timeTaken) {
+    const element = document.createElement('div');
+    element.className = `question-item ${isCorrect ? 'correct' : isSkipped ? 'skipped' : 'incorrect'}`;
+    
+    // Format time display
+    const timeDisplay = timeTaken >= 60 
+        ? `${Math.floor(timeTaken/60)}m ${Math.round(timeTaken%60)}s` 
+        : `${Math.round(timeTaken)}s`;
+        
+    // Get answer texts
+    let userAnswerText = 'Not answered';
+    let selectedOptionChar = '';
+    
+    if (isSkipped) {
+        userAnswerText = 'Skipped';
+    } else if (response.selectedOption !== undefined && response.selectedOption !== null) {
+        // Get the option text
+        const selectedOption = question.options[response.selectedOption];
+        if (selectedOption) {
+            userAnswerText = selectedOption;
+            selectedOptionChar = String.fromCharCode(65 + response.selectedOption); // A, B, C, D...
+        }
+    }
+    
+    // Get correct answer text
+    const correctAnswerOption = question.correctAnswer !== undefined ? question.options[question.correctAnswer] : null;
+    const correctAnswerChar = question.correctAnswer !== undefined ? String.fromCharCode(65 + question.correctAnswer) : '';
+    const correctAnswerText = correctAnswerOption || 'No correct answer provided';
+
+    element.innerHTML = `
+        <div class="question-header">
+            <span class="question-topic">${question.topic || 'General'}</span>
+            <span class="question-difficulty ${question.difficulty || 'medium'}">
+                ${(question.difficulty || 'Medium').charAt(0).toUpperCase() + (question.difficulty || 'Medium').slice(1)}
+            </span>
+        </div>
+        <div class="question-text">Q${index + 1}: ${question.text}</div>
+        <div class="answer-section">
+            <div class="answer-row">
+                <span class="answer-label">Your Answer:</span>
+                <span class="${isCorrect ? 'correct-answer' : isSkipped ? 'skipped-answer' : 'incorrect-answer'}">
+                    ${selectedOptionChar ? `${selectedOptionChar}. ` : ''}${userAnswerText}
+                </span>
+            </div>
+            ${!isCorrect ? `
+            <div class="answer-row">
+                <span class="answer-label">Correct Answer:</span>
+                <span class="correct-answer">${correctAnswerChar ? `${correctAnswerChar}. ` : ''}${correctAnswerText}</span>
+            </div>
+            ` : ''}
+            <div class="time-taken">Time taken: ${timeDisplay}</div>
+        </div>
+        ${question.explanation ? `
+        <div class="explanation">
+            <strong>Explanation:</strong> ${question.explanation}
+        </div>
+        ` : ''}
+    `;
+
+    return element;
+}
+
+function renderImprovementSuggestions(analysis) {
+    renderSuggestionList(
+        'improvement-areas', 
+        analysis.byTopic, 
+        stats => stats.correct / stats.total < 0.5 && stats.total >= 2,
+        'focus-area',
+        'fa-exclamation-circle',
+        'No significant improvement areas identified. Keep up the good work!'
+    );
+
+    renderSuggestionList(
+        'strength-areas', 
+        analysis.byTopic, 
+        stats => stats.correct / stats.total >= 0.75 && stats.total >= 2,
+        'strength-area',
+        'fa-check-circle',
+        'No particularly strong areas identified yet. Keep practicing!'
+    );
+}
+
+function renderSuggestionList(containerId, topicData, filterFn, itemClass, iconClass, emptyMessage) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = '';
+
+    const items = Object.entries(topicData)
+        .filter(([_, stats]) => stats.total > 0 && filterFn(stats))
+        .sort((a, b) => (a[1].correct / a[1].total) - (b[1].correct / b[1].total));
+
+    if (items.length === 0) {
+        container.innerHTML = `<p>${emptyMessage}</p>`;
+        return;
+    }
+
+    items.forEach(([topic, stats]) => {
+        const percentage = Math.round((stats.correct / stats.total) * 100);
+        const avgTime = stats.timeSpent / stats.total;
+        
+        const timeDisplay = avgTime >= 60 
+            ? `${Math.floor(avgTime/60)}m ${Math.round(avgTime%60)}s` 
+            : `${Math.round(avgTime)}s`;
+            
+        const item = document.createElement('div');
+        item.className = itemClass;
+        item.innerHTML = `
+            <i class="fas ${iconClass} ${itemClass === 'focus-area' ? 'focus-icon' : 'strength-icon'}"></i>
+            <div>
+                <strong>${topic}</strong> - Scored ${percentage}% (${stats.correct}/${stats.total})
+                <br>
+                <small>Average time: ${timeDisplay} per question. ${itemClass === 'focus-area' 
+                    ? 'Practice more questions in this area to improve your score.' 
+                    : 'You\'re performing well in this area!'}</small>
+            </div>
+        `;
+        container.appendChild(item);
+    });
+}
+
+function setupTabNavigation() {
+    const tabs = document.querySelectorAll('.tab');
+    
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            // Remove active class from all tabs and contents
+            tabs.forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+            // Add active class to clicked tab and corresponding content
+            tab.classList.add('active');
+            const tabId = tab.getAttribute('data-tab');
+            document.getElementById(`${tabId}-tab`).classList.add('active');
+        });
+    });
+}
+</script>
+</body>
+</html>
