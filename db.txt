@@ -1,0 +1,14 @@
+Host
+bspknp2miraf4yj8ufg5-mysql.services.clever-cloud.com
+Database Name
+bspknp2miraf4yj8ufg5
+User
+uopdjrimuwnnyrbx
+Password
+CLoyJ2Gapy8pfjsvrMeM
+🔐
+Port
+3306
+Connection URI
+mysql://uopdjrimuwnnyrbx:CLoyJ2Gapy8pfjsvrMeM@bspknp2miraf4yj8ufg5-mysql.services.clever-cloud.com:3306/bspknp2miraf4yj8ufg5
+🔐
