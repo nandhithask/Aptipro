@@ -106,14 +106,17 @@
 
     <!-- Navbar with User Icon -->
     <div class="navbar">
-        <div class="user-icon" onclick="toggleDropdown()">U</div>
+
+        <div class="user-icon" onclick="toggleDropdown()">u
+<!-- <i class="fa-solid fa-user"></i> -->
+</div>
         <div class="dropdown" id="dropdown">
-            <a href="#">Profile</a>
-            <a href="#" onclick="logout()">Logout</a>
+            <a href="profile.html">Profile</a>
+            <a href="login.html" onclick="logout()">Logout</a>
         </div>
     </div>
 
-    <h1>Welcome to the Aptitude Dashboard</h1>
+    <h1>Welcome to the AptiPro</h1>
     
     <!-- Hoverable Rectangles -->
     <div class="container">
@@ -126,6 +129,11 @@
     </div>
 
     <script>
+const username = sessionStorage.getItem('currentUsername');
+if (!username) window.location.href = 'login.html';
+// const urlParams = new URLSearchParams(window.location.search);
+//   const username = urlParams.get('username'); 
+// Shows the logged-in username
         // Toggle Dropdown Menu
         function toggleDropdown() {
             const dropdown = document.getElementById("dropdown");

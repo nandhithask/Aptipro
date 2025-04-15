@@ -5,9 +5,13 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 
 const app = express();
+const path = require("path");
 app.use(express.json());
 app.use(cors());
 app.use(bodyParser.json());
+
+app.use(express.static(path.join(__dirname, 'public')));
+
 
 // MySQL Database Connection
 const db = mysql.createPool({
@@ -73,7 +77,11 @@ app.post("/login", async (req, res) => {
             return res.status(401).json({ message: "Invalid username or password" });
         }
 
-        res.status(200).json({ message: "Login successful", user });
+        res.status(200).json({ message: "Login successful",  user: {
+                id: user.id,
+                username: user.username,
+                email: user.email
+            } });
     } catch (err) {
         console.error("Login error:", err);
         res.status(500).json({ message: "Internal Server Error" });
@@ -178,6 +186,67 @@ app.get('/api/questions', async (req, res) => {
                 sql: err.sql
             } : undefined
         });
+    }
+});
+
+
+// In your server code
+app.post('/api/save-test-result', async (req, res) => {
+    console.log('Received test result:', req.body);
+const {
+        user_id,
+        test_name,
+        topic,
+        score,
+        total_questions,
+        avg_time,
+        detailed_results
+    } = req.body;
+
+    try {
+        const [result] = await db.execute(
+            `INSERT INTO test_history 
+             (user_id, test_name, topic, score, total_questions, avg_time, detailed_results, date_taken)
+             VALUES (?, ?, ?, ?, ?, ?, ?, NOW())`,
+            [user_id, test_name, topic, score, total_questions, avg_time, detailed_results]
+        );
+
+
+//  console.log('Insert result:', result);
+        res.json({ 
+            success: true,
+            testId: result.insertId
+        });
+    } catch (error) {
+        console.error('Database error:', {
+            message: error.message,
+            sqlMessage: error.sqlMessage,
+            sql: error.sql
+        });
+        res.status(500).json({ 
+            error: 'Failed to save test results',
+            details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
+    }
+});
+app.get('/api/test-history/:userId', async (req, res) => {
+    try {
+        const [results] = await db.execute(
+            `SELECT 
+                test_id,
+                test_name,
+                topic,
+                score,
+                date_taken
+             FROM test_history 
+             WHERE user_id = ?
+             ORDER BY date_taken DESC`,
+            [req.params.userId]
+        );
+        res.json(results);
+    } catch (error) {
+        console.error('Database error:', error);
+        res.status(500).json({ error: 'Failed to fetch test history' });
     }
 });
 

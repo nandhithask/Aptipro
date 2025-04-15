@@ -326,6 +326,8 @@ const urlParams = new URLSearchParams(window.location.search);
 const questionCount = parseInt(urlParams.get('questions')) || 25;
 const allocatedTime = parseInt(urlParams.get('time')) || 30;
 const topic = urlParams.get('topic') || 'aptitude';
+const test = urlParams.get('test') || 'o';
+
 
 
 // Test state variables
@@ -366,6 +368,8 @@ async function fetchQuestions() {
         const apiUrl = new URL('http://localhost:3000/api/questions');
         apiUrl.searchParams.append('count', questionCount);
         apiUrl.searchParams.append('topic', topic);
+        apiUrl.searchParams.append('test', test);
+
 
         const response = await fetch(apiUrl);
         
@@ -617,7 +621,8 @@ function submitTest(timeExpired = false) {
     sessionStorage.setItem('testResults', JSON.stringify(testResults));
     
     // Navigate to results page
-    window.location.href = 'results.html';
+
+    window.location.href = `results.html?test=${test}`;
 }
 
 // Helper functions

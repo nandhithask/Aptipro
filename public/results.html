@@ -470,7 +470,7 @@
                     </div>
                 </div>
 
-                <a href="#" class="btn btn-block">Take Another Test</a>
+                <a href="dashboard.html" class="btn btn-block">Take Another Test</a>
             </div>
 
             <div class="detailed-analysis">
@@ -502,24 +502,21 @@
 
                     <div class="tab-content" id="all-tab">
                         <div id="all-questions">
-                            <!-- Populated by JavaScript -->
                         </div>
                     </div>
                 </div>
 
-                <div class="improvement-section">
+                <!-- <div class="improvement-section">
                     <div class="improvement-card">
                         <h3>Areas to Improve</h3>
                         <div id="improvement-areas">
-                            <!-- Populated by JavaScript -->
                         </div>
-                    </div>
+                    </div> -->
 
-                    <div class="improvement-card">
+                    <!-- <div class="improvement-card">
                         <h3>Your Strengths</h3>
                         <div id="strength-areas">
-                            <!-- Populated by JavaScript -->
-                        </div>
+                        </div> -->
                     </div>
                 </div>
             </div>
@@ -528,8 +525,14 @@
 
    <!-- Add this right before the closing </body> tag -->
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+
+const urlParams = new URLSearchParams(window.location.search);
+const test = urlParams.get('test') || 'o';
+
+
+document.addEventListener('DOMContentLoaded', async function() {
     // 1. Retrieve and validate session data
+
     const testData = JSON.parse(sessionStorage.getItem('testResults'));
     if (!testData || !testData.questions || !testData.userResponses) {
         alert('No test results found. Please take a test first.');
@@ -539,7 +542,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 2. Process and analyze results
     const analysis = analyzeTestData(testData);
-    
+       await saveTestToDatabase(testData, analysis);
     // 3. Render all components
     renderTestSummary(testData, analysis);
     renderPerformanceCharts(analysis);
@@ -862,6 +865,52 @@ function setupTabNavigation() {
             document.getElementById(`${tabId}-tab`).classList.add('active');
         });
     });
+}
+
+
+async function saveTestToDatabase(testData, analysis) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const topic = urlParams.get('topic') || 'General';
+      const test = urlParams.get('test') || 'Aptitude Test';
+    // Choose ONE of these options:
+    const userId = 1; // Option 1: Hardcoded for testing
+    // const userId = getCurrentUserId(); // Option 2: Use proper auth
+    
+    const payload = {
+        user_id: userId,
+        test_name: test,
+        topic: topic,
+        score: parseFloat(analysis.summary.accuracy),
+        total_questions: testData.questions.length,
+        avg_time: analysis.timing.averageTime,
+        detailed_results: JSON.stringify({
+            byTopic: analysis.byTopic,
+            byDifficulty: analysis.byDifficulty,
+            questions: testData.questions.map((q, i) => ({
+                question: q.text,
+                userAnswer: testData.userResponses[i]?.selectedOption,
+                correctAnswer: q.correctAnswer,
+                timeSpent: testData.userResponses[i]?.timeSpent || 0
+            }))
+        })
+    };
+
+    try {
+        const response = await fetch('http://localhost:3000/api/save-test-result', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Failed to save results');
+        }
+        console.log('Test results saved successfully');
+    } catch (error) {
+        console.error('Error saving test results:', error.message);
+    }
+
 }
 </script>
 </body>

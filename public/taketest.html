@@ -131,19 +131,17 @@
 
 <body>
 
-    <h1>Quantitative Aptitude</h1>
+    <h1>Test your Aptitude skills</h1>
 
     <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
         <div class="carousel-inner">
             <div class="carousel-item active">
-                <img src="https://via.placeholder.com/1000x450.png?text=Master+Quantitative+Aptitude" class="d-block w-100" alt="Master Quantitative Aptitude">
+                <img src="https://via.placeholder.com/1000x450.png?text=Master+Quantitative+Aptitude" class="d-block w-100" alt="Brush-up tips">
             </div>
             <div class="carousel-item">
-                <img src="https://via.placeholder.com/1000x450.png?text=Improve+Problem-Solving+Skills" class="d-block w-100" alt="Improve Problem Solving">
+                <img src="https://via.placeholder.com/1000x450.png?text=Improve+Problem-Solving+Skills" class="d-block w-100" alt="Brush-up tips">
             </div>
-            <div class="carousel-item">
-                <img src="https://via.placeholder.com/1000x450.png?text=Challenge+Yourself+Everyday" class="d-block w-100" alt="Challenge Yourself">
-            </div>
+            
         </div>
 
         <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="prev">
@@ -211,6 +209,8 @@
 
          const urlParams = new URLSearchParams(window.location.search);
         const topic = urlParams.get('topic');
+        const test = urlParams.get('test');
+
 
 
         agreeCheckbox.addEventListener('change', () => {
@@ -232,7 +232,7 @@
 
 
 
-            testLink.href = `attend-test.html?questions=${questionCount}&time=${allocatedTime}&topic=${topic}`;
+            testLink.href = `attend-test.html?questions=${questionCount}&time=${allocatedTime}&topic=${topic}&test=${test}`;
             timeDisplay.innerHTML = `Allocated Time: ${allocatedTime} minutes`;
 
 

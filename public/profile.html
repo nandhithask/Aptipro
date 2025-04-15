@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aptitude Test Profile</title>
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --primary-light: #e9efff;
+            --secondary-color: #2d3748;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --light-gray: #f9fafb;
+            --border-color: #e5e7eb;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --radius: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background-color: #f3f4f6;
+            color: var(--text-primary);
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 30px auto;
+            background-color: #fff;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+        }
+
+        .header-banner {
+            height: 120px;
+            background: linear-gradient(135deg, #4361ee, #3a0ca3);
+        }
+
+        .profile-header {
+            position: relative;
+            padding: 20px 30px 30px;
+        }
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .profile-name {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .tests-count {
+            font-size: 16px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tests-count i {
+            color: var(--primary-color);
+        }
+
+        .content-container {
+            padding: 0 30px 30px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin: 30px 0 20px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: var(--primary-color);
+        }
+
+        .test-list {
+            list-style: none;
+            display: grid;
+            gap: 15px;
+        }
+
+        .test-item {
+            padding: 20px;
+            border-radius: var(--radius);
+            background-color: white;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .test-item:hover {
+            transform: translateY(-3px);
+            border-color: var(--primary-color);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .test-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .test-name {
+            font-weight: 600;
+            font-size: 17px;
+            color: var(--text-primary);
+        }
+
+        .test-date {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .test-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .test-score {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .test-status {
+            padding: 5px 12px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-passed {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success-color);
+        }
+
+        .status-failed {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger-color);
+        }
+
+        .no-tests {
+            text-align: center;
+            padding: 40px 0;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px 0;
+            color: var(--text-secondary);
+        }
+
+        .progress-bar {
+            height: 6px;
+            background-color: #e5e7eb;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--primary-color);
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                margin: 10px auto;
+            }
+            
+            .profile-header, .content-container {
+                padding: 0 20px 20px;
+            }
+            
+            .header-banner {
+                height: 80px;
+            }
+            
+            .profile-name {
+                font-size: 22px;
+            }
+            
+            .tests-count {
+                font-size: 14px;
+            }
+            
+            .test-item-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            
+            .test-details {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            
+            .test-status {
+                align-self: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-banner"></div>
+        
+        <div class="profile-header">
+            <div class="profile-info" id="name">
+                <h1 class="profile-name">Alex Johnson</h1>
+                <div class="tests-count">
+                    <i>📊</i> <span id="testCount">12 Tests Attended</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="content-container">
+            <h2 class="section-title">
+                <i>📜</i> Test History
+            </h2>
+            
+            <ul class="test-list" id="testList">
+                <!-- Test items will be populated by JavaScript -->
+            </ul>
+        </div>
+    </div>
+
+    <script>
+    // Replace the sample data with real API calls
+    function getCurrentUser() {
+        const userData = sessionStorage.getItem('currentUser');
+        return userData ? JSON.parse(userData) : null;
+    }
+
+    async function fetchTestHistory() {
+        try {
+            // Get user ID (you'll need to implement this based on your auth system)
+            const userId = 1; // Replace with actual user ID
+            
+            const response = await fetch(`/api/test-history/${userId}`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch test history');
+            }
+            return await response.json();
+        } catch (error) {
+            console.error('Error fetching test history:', error);
+            return []; // Return empty array if there's an error
+        }
+    }
+
+    // Modified render function to handle API data
+    async function renderTestList() {
+        const testList = document.getElementById('testList');
+        testList.innerHTML = '<li class="loading">Loading test history...</li>';
+        
+        const tests = await fetchTestHistory();
+        
+        if (tests.length === 0) {
+            testList.innerHTML = '<li class="no-tests">No test history found</li>';
+            document.getElementById('testCount').textContent = '0 Tests Attended';
+            return;
+        }
+        
+        testList.innerHTML = '';
+        
+        tests.forEach(test => {
+            const listItem = document.createElement('li');
+            listItem.className = 'test-item';
+            
+            // Format date properly
+            const testDate = new Date(test.date_taken);
+            const formattedDate = testDate.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+            
+            // Determine status (you may need to adjust this based on your data)
+            const status = test.score >= 70 ? 'Passed' : 'Failed';
+            
+            listItem.innerHTML = `
+                <div class="test-item-header">
+                    <div class="test-name">${test.test_name}</div>
+                    <div class="test-date">${formattedDate}</div>
+                </div>
+                <div class="test-details">
+                    <div>
+                        <div class="test-score">Score: ${test.score}%</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${test.score}%"></div>
+                        </div>
+                    </div>
+                    <div class="test-status status-${status.toLowerCase()}">${status}</div>
+                </div>
+            `;
+            
+            listItem.addEventListener('click', () => {
+                // You can enhance this to show more details
+                alert(`Viewing details for: ${test.test_name}\nScore: ${test.score}%\nDate: ${formattedDate}`);
+            });
+            
+            testList.appendChild(listItem);
+        });
+        
+        document.getElementById('testCount').textContent = `${tests.length} Tests Attended`;
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', async () => {
+        const user = getCurrentUser();
+        
+        if (!user) {
+            // Redirect to login if no user data found
+            window.location.href = 'login.html';
+            return;
+        }
+
+        // Display username
+        document.querySelector('.profile-name').textContent = user.username;
+
+        // Load test history
+        await renderTestList(user.id);
+    });
+    </script>
+</body>
+</html>

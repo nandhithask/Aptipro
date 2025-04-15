@@ -285,9 +285,9 @@
             <i>Password</i>
           </div>
           <div class="links">
-            <a href="#">Forgot Password?</a>
+            <!-- <a href="#">Forgot Password?</a> -->
           </div><br>
-          <div class="inputBox">
+          <div class="inputBox" id="testLink">
             <input type="submit" value="Login">
           </div>
           <center>
@@ -320,15 +320,25 @@
           body: JSON.stringify({ username, password }),
         });
 
-        if (response.status === 200) {
-          // Redirect to dashboard.html after a successful login
-          window.location.href = "dashboard.html";
+        if (response.ok) {
+          const data = await response.json();
+          sessionStorage.setItem('currentUsername', username);
+window.location.href = 'dashboard.html';
+          // Store user data in sessionStorage
+          sessionStorage.setItem('currentUser', JSON.stringify(data.user));
+          
+          // Redirect to dashboard with username in URL
+//  window.location.href = `dashboard.html?username=${encodeURIComponent(username)}`;
+        } else {
+          alert('Login failed. Please check your credentials.');
         }
       } catch (error) {
         console.error("Error:", error);
+        alert('An error occurred during login. Please try again.');
       }
     });
   });
+
 </script>
 
 
